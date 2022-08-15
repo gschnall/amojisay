@@ -1,6 +1,6 @@
 # amojisay
 
-Terminal cli for one line ascii emojis (˵╹◡╹)━☆ ･ﾟ✧ *:･ﾟ
+(˵╹◡╹)━☆ ･ﾟ✧ *:･ﾟTerminal cli for one line ascii emojis 
 
 ## Getting Started
 
@@ -15,7 +15,7 @@ wget -O amojisay.tar.gz https://github.com/gschnall/amojisay/releases/download/v
 ### Mac & Windows
 
 1. Download the zip file for your sysytem
-   https://github.com/gschnall/tmint/releases  
+   https://github.com/gschnall/amojisay/releases  
    for macOs use `Darwin_x86_64.tar.gz`
 2. Unzip the contents
 3. move the `amojisay` executable to your `/usr/local/bin` directory

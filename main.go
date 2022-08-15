@@ -123,30 +123,29 @@ func setupCliApp() {
 			listAllAmojisInJSONFile()
 		} else if c.String("s") != "" {
 			amojiJSONFile := getAmojiJSONFile()
-			textList := strings.Split(c.String("s"), " ")
-			amojiString := ""
-			for i := 0; i < len(textList); i++ {
-				word := textList[i]
-				endSpace := " "
-				if i == (len(textList) - 1) {
-					endSpace = "\n"
-				}
-				// check if word is actually an amoji
-				match, _ := regexp.MatchString(`^%{.*}$`, word)
-				if match {
-					amojiName := getAmojiNameFromTemplate(word)
-					word = fmt.Sprintf("%v", amojiJSONFile[amojiName])
-				}
+			var re = regexp.MustCompile(`%{[^{}]*}`)
+			matches := re.FindAllStringSubmatch(c.String("s"), -1)
 
-				amojiString += word + endSpace
+			amojiString := c.String("s")
+			for _, v := range matches {
+				amojiVar := v[0]
+				amojiName := amojiVar[2 : len(amojiVar)-1]
+				amoji := amojiJSONFile[amojiName]
+				if amoji == nil {
+					fmt.Printf("amoji [ " + amojiName + " ] not found.\namoji -l |> list all available amojis\n")
+					os.Exit(0)
+				} else {
+					amojiString = strings.Replace(amojiString, amojiVar, fmt.Sprintf("%v", amoji), -1)
+				}
 			}
-			fmt.Print(amojiString)
+			fmt.Print(amojiString + "\n")
 		} else if c.String("a") != "" {
 			amojiName := c.String("a")
 			amoji := getAmojiFromJSONFile(amojiName)
 
 			if amoji == nil {
 				fmt.Printf("amoji [ " + amojiName + " ] not found.\namoji -l |> list all available amojis\n")
+				os.Exit(0)
 			} else if c.Bool("p") {
 				fmt.Printf("%s %s\n", message, amoji)
 			} else {
