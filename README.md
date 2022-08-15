@@ -1,6 +1,6 @@
 # amojisay
 
-(˵╹◡╹)━☆ ･ﾟ✧ *:･ﾟTerminal cli for one line ascii emojis 
+(˵╹◡╹)━☆ ･ﾟﾟ Terminal cli for one line ascii emojis
 
 ## Getting Started
 
@@ -28,23 +28,48 @@ wget -O amojisay.tar.gz https://github.com/gschnall/amojisay/releases/download/v
 
 ## Args
 
-`-a` select ascii emoji
-`-l` list all emojis
-`-p` prepend text
-`-s` use string substition  
+- `-a` | select ascii emoji
+- `-l` | list all emojis
+- `-p` | prepend text
+- `-s` | use string substition
 
 ## Examples
+
 ```sh
 > amojisay -a orly "you don't say..."
+```
+
+```
 (눈_눈) you don't say...
+```
 
+---
+
+```sh
 > amojisay -p -a run 'Run away!'
+```
+
+```
 Run away! (╯°□°)╯
+```
 
+---
+
+```sh
 > amojisay -s '%{tada} %{sparkle} Great Job! %{star} %{sparkle2}'
-⊂(o‿o)つ *✧ ･ﾟ Great Job! ★  ･ﾟ✧ *:･ﾟ
+```
 
+```
+⊂(o‿o)つ *✧ ･ﾟ Great Job! ★  ･ﾟ✧ *:･ﾟ`
+```
+
+---
+
+```sh
 > amojisay -a hello 'Greetings human' | cowsay
+```
+
+```
 ________________________
 < (ʘ‿ʘ)╯ Greetings human >
  ------------------------
@@ -53,7 +78,7 @@ ________________________
             (__)\       )\/\
                 ||----w |
                 ||     ||
-````
+```
 
 ## Issues
 
