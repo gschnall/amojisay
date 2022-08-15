@@ -132,7 +132,7 @@ func setupCliApp() {
 				amojiName := amojiVar[2 : len(amojiVar)-1]
 				amoji := amojiJSONFile[amojiName]
 				if amoji == nil {
-					fmt.Printf("amoji [ " + amojiName + " ] not found.\namoji -l |> list all available amojis\n")
+					fmt.Printf("amoji [ " + amojiName + " ] not found.\namojisay -l |> list all available amojis\n")
 					os.Exit(0)
 				} else {
 					amojiString = strings.Replace(amojiString, amojiVar, fmt.Sprintf("%v", amoji), -1)
@@ -144,7 +144,7 @@ func setupCliApp() {
 			amoji := getAmojiFromJSONFile(amojiName)
 
 			if amoji == nil {
-				fmt.Printf("amoji [ " + amojiName + " ] not found.\namoji -l |> list all available amojis\n")
+				fmt.Printf("amoji [ " + amojiName + " ] not found.\namojisay -l |> list all available amojis\n")
 				os.Exit(0)
 			} else if c.Bool("p") {
 				fmt.Printf("%s %s\n", message, amoji)
