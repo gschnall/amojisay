@@ -10,6 +10,10 @@ import (
 	"sort"
 	"strings"
 
+	amoji_map "github.com/gschnall/amojisay/amoji_map"
+
+	"github.com/adrg/strutil"
+	"github.com/adrg/strutil/metrics"
 	"github.com/urfave/cli"
 )
 
@@ -23,25 +27,8 @@ var app = cli.App{
 	},
 }
 
-func getAmojiJSONFile() map[string]interface{} {
-	// Let's first read the `config.json` file
-	content, err := ioutil.ReadFile("./amojis.json")
-	if err != nil {
-		log.Fatal("Error could not ReadFile ./amojis.json): ", err)
-	}
-
-	// Now let's unmarshall the data into `payload`
-	var payload map[string]interface{}
-	err = json.Unmarshal(content, &payload)
-	if err != nil {
-		log.Fatal("Error during Unmarshal(): ", err)
-	}
-	return payload
-}
-
-func getAmojiFromJSONFile(amojiName string) interface{} {
-	payload := getAmojiJSONFile()
-	return payload[amojiName]
+func getAmojiFromMap(amojiName string) interface{} {
+	return amoji_map.Amojis[amojiName]
 }
 
 func listAllAmojisInJSONFile() {
@@ -73,6 +60,31 @@ func getAmojiNameFromTemplate(s string) string {
 		log.Fatal(err)
 	}
 	return reg.ReplaceAllString(s, "")
+}
+
+func searchAndPrintSimiliarAmojis(search string, payload map[string]interface{}) {
+	if len(search) < 2 {
+		fmt.Print("amoji " + search + " not found.\namojisay -l |> list all available amojis\n")
+	} else {
+		amojis := []string{}
+		for key := range payload {
+			similarity := strutil.Similarity(key, search, metrics.NewLevenshtein())
+
+			if similarity >= .75 || (len(search) > 2 && strings.HasPrefix(key, search) || len(search) > 3 && strings.Contains(key, search)) {
+				amojis = append(amojis, key)
+			}
+		}
+
+		if len(amojis) > 0 {
+			sort.Strings(amojis)
+			fmt.Print("¯\\_(ツ)_/¯ couldn't find amoji " + search + "\n\nMaybe you meant to use one of these:\n")
+			for i := 0; i < len(amojis); i++ {
+				fmt.Print(amojis[i] + " ")
+			}
+		} else {
+			fmt.Print("(╥﹏╥) amoji " + search + " not found.\namojisay -l |> list all available amojis\n")
+		}
+	}
 }
 
 func setupCliApp() {
@@ -122,17 +134,17 @@ func setupCliApp() {
 		if c.Bool("l") {
 			listAllAmojisInJSONFile()
 		} else if c.String("s") != "" {
-			amojiJSONFile := getAmojiJSONFile()
 			var re = regexp.MustCompile(`%{[^{}]*}`)
 			matches := re.FindAllStringSubmatch(c.String("s"), -1)
 
 			amojiString := c.String("s")
 			for _, v := range matches {
 				amojiVar := v[0]
-				amojiName := amojiVar[2 : len(amojiVar)-1]
-				amoji := amojiJSONFile[amojiName]
+				amojiName := strings.ToLower(amojiVar[2 : len(amojiVar)-1])
+				amoji := amoji_map.Amojis[amojiName]
 				if amoji == nil {
-					fmt.Printf("amoji [ " + amojiName + " ] not found.\namojisay -l |> list all available amojis\n")
+					searchAndPrintSimiliarAmojis(amojiName, amoji_map.Amojis)
+					// fmt.Printf("amoji [ " + amojiName + " ] not found.\namojisay -l |> list all available amojis\n")
 					os.Exit(0)
 				} else {
 					amojiString = strings.Replace(amojiString, amojiVar, fmt.Sprintf("%v", amoji), -1)
@@ -140,11 +152,12 @@ func setupCliApp() {
 			}
 			fmt.Print(amojiString + "\n")
 		} else if c.String("a") != "" {
-			amojiName := c.String("a")
-			amoji := getAmojiFromJSONFile(amojiName)
+			amojiName := strings.ToLower(c.String("a"))
+			amoji := getAmojiFromMap(amojiName)
 
 			if amoji == nil {
-				fmt.Printf("amoji [ " + amojiName + " ] not found.\namojisay -l |> list all available amojis\n")
+				searchAndPrintSimiliarAmojis(amojiName, amoji_map.Amojis)
+				// fmt.Printf("amoji [ " + amojiName + " ] not found.\namojisay -l |> list all available amojis\n")
 				os.Exit(0)
 			} else if c.Bool("p") {
 				fmt.Printf("%s %s\n", message, amoji)

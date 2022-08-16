@@ -56,11 +56,11 @@ Run away! (╯°□°)╯
 ---
 
 ```sh
-> amojisay -s '%{tada} %{sparkle} Great Job! %{star} %{sparkle2}'
+> amojisay -s "%{whoosh} %{duel}%{sparkle} %{run} wOfF<%{dog}"
 ```
 
 ```
-⊂(o‿o)つ *✧ ･ﾟ Great Job! ★  ･ﾟ✧ *:･ﾟ`
+。。。ミ ᕕ(╭ರ╭ ͟ʖ╮•́)⊃¤=(————-*✧ ･ﾟ (╯°□°)╯ wOfF<(◕ᴥ◕ʋ)
 ```
 
 ---
