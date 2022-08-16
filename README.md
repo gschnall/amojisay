@@ -9,7 +9,7 @@ Place the executable in your `/usr/local/bin` directory
 ### Linux
 
 ```shell
-wget -O amojisay.tar.gz https://github.com/gschnall/amojisay/releases/download/v0.2.0/amojisay_0.2.0_Linux_x86_64.tar.gz && tar xvf amojisay.tar.gz && sudo mv amojisay /usr/local/bin
+wget -O amojisay.tar.gz https://github.com/gschnall/amojisay/releases/download/v0.5.0/amojisay_0.5.0_Linux_x86_64.tar.gz && tar xvf amojisay.tar.gz && sudo mv amojisay /usr/local/bin
 ```
 
 ### Mac & Windows
