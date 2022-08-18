@@ -1,9 +1,7 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"regexp"
@@ -31,20 +29,24 @@ func getAmojiFromMap(amojiName string) interface{} {
 	return amoji_map.Amojis[amojiName]
 }
 
-func listAllAmojisInJSONFile() {
-	content, err := ioutil.ReadFile("./amojis.json")
-	if err != nil {
-		return
-	}
-
-	var payload map[string]interface{}
-	err = json.Unmarshal(content, &payload)
-	if err != nil {
-		log.Fatal("Error during Unmarshal(): ", err)
-	}
-
+func dumpAllAmojis() {
 	amojis := []string{}
-	for key := range payload {
+
+	for key := range amoji_map.Amojis {
+		amoji := fmt.Sprintf("%v", amoji_map.Amojis[key])
+		amojis = append(amojis, "- "+key+": "+amoji+"\n")
+	}
+
+	sort.Strings(amojis)
+	for i := 0; i < len(amojis); i++ {
+		fmt.Print(amojis[i] + " ")
+	}
+}
+
+func listAllAmojis() {
+	amojis := []string{}
+
+	for key := range amoji_map.Amojis {
 		amojis = append(amojis, key)
 	}
 
@@ -70,7 +72,7 @@ func searchAndPrintSimiliarAmojis(search string, payload map[string]interface{})
 		for key := range payload {
 			similarity := strutil.Similarity(key, search, metrics.NewLevenshtein())
 
-			if similarity >= .75 || (len(search) > 2 && strings.HasPrefix(key, search) || len(search) > 3 && strings.Contains(key, search)) {
+			if similarity >= .75 || (len(search) >= 2 && strings.HasPrefix(key, search) || len(search) > 3 && strings.Contains(key, search)) {
 				amojis = append(amojis, key)
 			}
 		}
@@ -115,6 +117,11 @@ func setupCliApp() {
 			Usage:    "list all amojis",
 			Required: false,
 		},
+		&cli.BoolFlag{
+			Name:     "d",
+			Usage:    "dump all amojis to output",
+			Required: false,
+		},
 	}
 
 	app.Action = func(c *cli.Context) error {
@@ -132,7 +139,9 @@ func setupCliApp() {
 		// }
 
 		if c.Bool("l") {
-			listAllAmojisInJSONFile()
+			listAllAmojis()
+		} else if c.Bool("d") {
+			dumpAllAmojis()
 		} else if c.String("s") != "" {
 			var re = regexp.MustCompile(`%{[^{}]*}`)
 			matches := re.FindAllStringSubmatch(c.String("s"), -1)
